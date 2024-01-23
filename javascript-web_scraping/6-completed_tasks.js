@@ -1,20 +1,21 @@
 #!/usr/bin/node
-const request = require('request');
+const axios = require('axios');
 const url = process.argv[2];
 
-request.get(url, (error, response, body) => {
-  if (error) {
-    console.error(error);
-  }
-  const jsonResponse = JSON.parse(body);
-  const tasksdict = {};
+axios.get(url)
+  .then(response => {
+    const jsonResponse = response.data;
+    const tasksdict = {};
 
-  for (let i = 0; i < jsonResponse.length; i++) {
-    const task = jsonResponse[i].completed;
-    const userid = jsonResponse[i].userId;
-    if (task === true) {
-      tasksdict[userid] = (tasksdict[userid] || 0) + 1;
+    for (let i = 0; i < jsonResponse.length; i++) {
+      const task = jsonResponse[i].completed;
+      const userid = jsonResponse[i].userId;
+      if (task === true) {
+        tasksdict[userid] = (tasksdict[userid] || 0) + 1;
+      }
     }
-  }
-  console.log(tasksdict);
-});
+    console.log(tasksdict);
+  })
+  .catch(error => {
+    console.error(error);
+  });
